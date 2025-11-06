@@ -37,20 +37,21 @@ LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 - @ Page 791
 - BREAK signal is set by BRK bit in UARTx.LCRH register.
 - It is important to set BREAK signal before data is loaded into TXDATA or FIFO register
+  ```c
+   //Control BREAK 
+   UARTx.LCRH = UARTx.LCRH | (1<<BRK );
+   //Code continues with loading data
+   //...
+   ```
 
 ### Generate LIN responder signals
 - @ Page 786.
-- To be able to software controll generation if LIN responder signals, the TXD_OUT and
+- To be able to software control generation if LIN responder signals, the TXD_OUT and
 TXD_CTL_EN bit in register UARTx.CTL0 needs to be configured
 - If TXD_CTL_EN = '1' then output pin can be controlled by the TXD_OUT bit if the UART transmit is disabled (CTL0.TXE is cleared).
 
    ```c
-   #include <stdio.h>
-
-   int main()
-   {
-       printf("Hello, world!");
-       return 0;
-   }
+   //Enable LIN responder signals generation
+   UARTx.CTL0 = UARTx.CTL0 | (1<<TXD_CTL_EN );
    ```
 
