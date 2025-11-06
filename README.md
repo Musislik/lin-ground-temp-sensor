@@ -12,6 +12,7 @@ Local interconnect network or (LIN) is a type of asynchronous communication betw
 
 ![LIN bus](https://canlogger1000.csselectronics.com/img/lin-bus-single-wire-termination-supply-ground.svg)
 
+LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 
 In used microcontroller MSPM0C1104 it is featured as an extension for UART module.
 
@@ -20,12 +21,6 @@ In used microcontroller MSPM0C1104 it is featured as an extension for UART modul
 
 # Hardware implementation of LIN protocol
 ## LIN transmission 
-- @ Page 786.
-- Sending the break signal can be done by setting the BRK bit in UARTx.LCRH register. This bit needs to be set
-before the data is written into the FIFO or transmit data register TXDATA.
-To generate LIN responder signals such as wake signals, the TX pin can be configured by TXD_OUT and
-TXD_CTL_EN bits in register UARTx.CTL0 to be software controlled. By setting TXD_CTL_EN bit to 1, the TX
-output pin can be controlled by the TXD_OUT bit if the UART transmit is disabled (CTL0.TXE is cleared).
 - @ Page 791
 - LIN counter is clocked by UART clock
 - Can be interrupted upon LINCNT counter overflow and is flagged as CPU_INT.IMASK.LINOVF
@@ -35,6 +30,19 @@ output pin can be controlled by the TXD_OUT bit if the UART transmit is disabled
 - BREAK signal is set by BRK bit in UARTx.LCRH register.
 - It is important to set BREAK signal before data is loaded into TXDATA or FIFO register
 
-### Generate wake signals
-- 
+### Generate LIN responder signals
+- @ Page 786.
+- To be able to software controll generation if LIN responder signals, the TXD_OUT and
+TXD_CTL_EN bit in register UARTx.CTL0 needs to be configured
+- If TXD_CTL_EN = '1' then output pin can be controlled by the TXD_OUT bit if the UART transmit is disabled (CTL0.TXE is cleared).
+
+   ```c
+   #include <stdio.h>
+
+   int main()
+   {
+       printf("Hello, world!");
+       return 0;
+   }
+   ```
 
