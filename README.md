@@ -17,12 +17,14 @@ LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 ## LIN frame
 ![LIN frame](https://ni.scene7.com/is/image/ni/LIN_frame_20090802104146?scl=1)
 
-In used microcontroller MSPM0C1104 it is featured as an extension for UART module.
 
 - **Break sequence**: Serves as start notice for all nodes in the bus.
-- **Sync sequence**: Master will send `0x55` into the bus, so that all slaves will synchroze and set their baurate according to it
+- **Sync sequence**: Master will send character `0x55` into the bus, so that all slaves will synchroze and set their baurate according to it
+- **ID sequence**: In this sequence, master will provide task (recieve or send) and address of slave in a bus.
+- **Data**: 8 bits of data is sent/recieved
+- **Checksum sequence**: It is transmitted as a last field frame to verify that transmission was successful
 
-
+- In used microcontroller MSPM0C1104 it is featured as an extension for UART module.
 - See [Technical Reference Manual](https://www.ti.com/lit/ug/slau893c/slau893c.pdf?ts=1762344977058&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FMSPM0C1104) of MSPM0C1104 pages 784 through 806 for UART/LIN extesion module.
 
 # Hardware implementation of LIN protocol
