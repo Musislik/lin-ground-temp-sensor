@@ -18,7 +18,7 @@ LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 ![LIN frame](https://ni.scene7.com/is/image/ni/LIN_frame_20090802104146?scl=1)
 
 
-- **Break sequence**: Serves as start notice for all nodes in the bus.
+- **Break sequence**: Serves as start notice for all nodes in the bus. When BREAK field begins the LIN line is pulled low for time period of 13 bits from master's side to give sufficient time for slaves to notice.
 - **Sync sequence**: Master will send character `0x55` into the bus, so that all slaves will synchroze and set their baurate according to it
 - **ID sequence**: In this sequence, master will provide task (recieve or send) and address of slave in a bus.
 - **Data**: 8 bits of data is sent/recieved
@@ -45,8 +45,8 @@ LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
    ```
 
 ### Generate LIN responder signals
-- @ Page 786.
-- To be able to software control generation if LIN responder signals, the TXD_OUT and
+- @ Page 786
+- To be able to software control generation of LIN responder signals, the TXD_OUT and
 TXD_CTL_EN bit in register UARTx.CTL0 needs to be configured
 - If TXD_CTL_EN = '1' then output pin can be controlled by the TXD_OUT bit if the UART transmit is disabled (CTL0.TXE is cleared).
 
@@ -54,4 +54,50 @@ TXD_CTL_EN bit in register UARTx.CTL0 needs to be configured
    //Enable LIN responder signals generation
    UARTx.CTL0 = UARTx.CTL0 | (1<<TXD_CTL_EN );
    ```
+## LIN recieve
+- @ Page 792
+- To detect BREAK and SYNC thus enabling reception, these features need to be software configured:
+
+#### A) BREAK Detection
+
+1. Initialize LIN counter to 0 `(UARTx.LINCNT = 0)`
+2. Enable counter compare match mode `(UARTx.LINCTL.LINC0_MATCH = 1)`
+3. Load `UARTx.LINC0` (counter capture 0 register) with counter value corresponding to $9.5 \cdot T_{bit}$
+4. Enable LINC0 match interrupt `(CPU_INT.IMASK.LINC0 = 1)`
+5. Setup LIN count control `(UARTx.LINCTL)`:
+- Enable count while low signal on RXD `(LINCTL.CNTRXLOW = 1)`
+- Enable LIN counter clearing on RXD falling edge `(LINCTL.ZERONE = 1)`
+- Enable LIN counter `(LINCTL.CTRENA = 1)`
+- Optionally a timeout can be added if BREAK field fails to pull itself high withing specific time (see page 792)
+
+#### B) SYNC Detection & edge detection
+
+- The following flow describes a possible LIN sync field validation procedure:
+1. Initialize LIN counter to 0 `(UARTx.LINCNT = 0)` after detecting a valid break field.
+2. Enable interrupt on RX falling edge `(CPU_INT.IMASK.RXNE = 1)`
+3. Setup LIN count control `(LINCTL)`:
+• Enable LIN counter capture on raising RX edge `(LINCTL.LINC1CAP = 1)`
+• Enable LIN counter capture on falling RX edge  `(LINCTL.LINC0CAP = 1)`
+• Enable LIN counter clearing on RX falling edge `(LINCTL.ZERONE = 1)`
+
+#### C) Edge detection during SYNC field
+
+- LIN extension features so called Capture Registers that will detect either rising or falling edge or Rx/Tx
+1. LIN counter is set to 0 and start counting on the falling RX edge. (LINCTL.ZERONE = 1)
+2. RX falling edge interrupt trigger `(RXNE)`:
+- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
+- Verify bit times
+3. RX falling edge interrupt trigger `(RXNE)`:
+- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
+- Verify bit times
+4. RX falling edge interrupt trigger `(RXNE)`:
+- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
+- Verify bit times
+5. RX falling edge interrupt trigger `(RXNE)`:
+- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
+- Verify bit times
+- Calculate the proper baud rate to set. Software must set the baud rate before the start bit of the PID field
+after sync field.
+
+- *TODO: Implement to code*
 
