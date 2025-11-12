@@ -20,7 +20,7 @@ LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 
 - **Break sequence**: Serves as start notice for all nodes in the bus. When BREAK field begins the LIN line is pulled low for time period of 13 bits from master's side to give sufficient time for slaves to notice.
 - **Sync sequence**: Master will send character `0x55` into the bus, so that all slaves will synchroze and set their baurate according to it
-- **ID sequence**: In this sequence, master will provide task (recieve or send) and address of slave in a bus.
+- **ID sequence**: In this sequence of 8 bits, master will provide task (recieve or send) and address of slave in a bus. First 6 bits containing slave address is sent, then 2 bits of parity is determines following task to slave: "01"... ignore data that will be sent, "10"... listen for data, "11"... send data.
 - **Data**: 8 bits of data is sent/recieved
 - **Checksum sequence**: It is transmitted as a last field frame to verify that transmission was successful
 
