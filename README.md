@@ -101,3 +101,4 @@ after sync field.
 
 - *TODO: Implement to code*
 
+![Schematic](https://github.com/Musislik/lin-ground-temp-sensor/blob/main/LIN_bus.svg)
