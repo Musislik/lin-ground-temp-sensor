@@ -1,9 +1,9 @@
 # LIN
 
 # TODO
-- MD - Program komunikace
-- PM - **Destička**, Šéfis
-- OO - Rešerš ovládání LIN![Uploading image.png…]()
+- MD - Program komunikace, reverse engeneering knihoven TI
+- PM - **Destička**, Šéfis, Slave program 
+- OO - Rešerš ovládání LIN, Master program    
 
 
 # About this project
@@ -50,6 +50,13 @@ Differences between commander and responder implementation [[2]](https://www.ti.
    ```
 
 ### Generate LIN responder signals
+
+Sync byte (0x55) is sent by UART peripheral. Účelem synchronizačního bajtu je umožnit responder zařízením přizpůsobit časovaní (jak dlouho trvá čas bitu). Tím lze zmírnit odlišnosti hodinových signálů. 
+
+PID (Protected IDentificator) určuje, který responder má odpovídat (a jestli). Význami jsou určeny... 
+
+Data 
+
 - @ Page 786
 - To be able to software control generation of LIN responder signals, the TXD_OUT and
 TXD_CTL_EN bit in register UARTx.CTL0 needs to be configured
