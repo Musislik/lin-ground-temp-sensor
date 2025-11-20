@@ -3,7 +3,7 @@
 # TODO
 - MD - Program komunikace
 - PM - **Destička**, Šéfis
-- OO - Rešerš ovládání LIN![Uploading image.png…]()
+- OO - Rešerš ovládání LIN
 
 
 # About this project
