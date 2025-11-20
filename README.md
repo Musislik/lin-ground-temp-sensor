@@ -11,7 +11,6 @@
 ## About LIN Protocol
 Local interconnect network or (LIN) is a type of asynchronous communication between devices. It is extesively used in automotive industry for communication between non-critical peripherals. It is a low-cost solution for serial communcation in mass production [[1](https://en.wikipedia.org/wiki/Local_Interconnect_Network)].
 
-![LIN bus](https://canlogger1000.csselectronics.com/img/lin-bus-single-wire-termination-supply-ground.svg)
 
 LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 
