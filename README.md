@@ -3,7 +3,8 @@
 # TODO
 - MD - Program komunikace
 - PM - **Destička**, Šéfis
-- OO - Rešerš ovládání LIN
+- OO - Rešerš ovládání LIN![Uploading image.png…]()
+
 
 # About this project
 - This project demostrates local interconnect network (LIN) communication
@@ -18,9 +19,9 @@ LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 ![LIN frame](https://ni.scene7.com/is/image/ni/LIN_frame_20090802104146?scl=1)
 
 
-- **Break sequence**: Serves as start notice for all nodes in the bus. When BREAK field begins the LIN line is pulled low for time period of 13 bits from master's side to give sufficient time for slaves to notice.
-- **Sync sequence**: Master will send character `0x55` into the bus, so that all slaves will synchroze and set their baurate according to it
-- **ID sequence**: In this sequence of 8 bits, master will provide task (recieve or send) and address of slave in a bus. First 6 bits containing slave address is sent, then 2 bits of parity is determines following task to slave: "01"... ignore data that will be sent, "10"... listen for data, "11"... send data.
+- **Break sequence**: Serves as start notice for all nodes in the bus. When BREAK field begins the LIN line is pulled low for time period of 13 bits from commander's side to give sufficient time for responders to notice.
+- **Sync sequence**: Commander will send character `0x55` into the bus, so that all responders will synchroze and set their baurate according to it
+- **ID sequence**: In this sequence of 8 bits, commander will provide task (recieve or send) and address of responder in a bus. First 6 bits containing responder address is sent, then 2 bits of parity is determines following task to responder: "01"... ignore data that will be sent, "10"... listen for data, "11"... send data.
 - **Data**: 8 bits of data is sent/recieved
 - **Checksum sequence**: It is transmitted as a last field frame to verify that transmission was successful
 
@@ -28,6 +29,10 @@ LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
 - See [Technical Reference Manual](https://www.ti.com/lit/ug/slau893c/slau893c.pdf?ts=1762344977058&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FMSPM0C1104) of MSPM0C1104 pages 784 through 806 for UART/LIN extesion module.
 
 # Hardware implementation of LIN protocol
+<img width="592" height="624" alt="image" src="https://github.com/user-attachments/assets/79f02f89-7344-48bb-88e8-a8f357bc6064" />
+
+Differences between commander and responder implementation [[2]](https://www.ti.com/lit/ds/symlink/tlin1039-q1.pdf?ts=1763575962774).
+
 ## LIN transmission 
 - @ Page 791
 - LIN counter is clocked by UART clock
