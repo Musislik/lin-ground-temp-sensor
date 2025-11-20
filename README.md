@@ -1,9 +1,9 @@
 # LIN
 
 # TODO
-- MD - Program komunikace
-- PM - **Destička**, Šéfis
-- OO - Rešerš ovládání LIN
+- MD - Program komunikace, reverse engeneering knihoven TI
+- PM - **Destička**, Šéfis, Slave program 
+- OO - Rešerš ovládání LIN, Master program 
 
 
 # About this project
