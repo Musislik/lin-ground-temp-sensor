@@ -1,108 +1,190 @@
-# LIN
+---
 
-# TODO
-- MD - Program komunikace, průzkum knihoven TI
-- PM - **Destička**, Šéfis, Slave program 
-- OO - Rešerš ovládání LIN, Master program 
+# LIN Communication Usage
 
+This project introduces the LIN communication protocol and provides practical hardware and software design guidelines using the MSPM0C1104 microcontroller and the TLIN1039 LIN transceiver.  
+The purpose is not to develop a device strictly compliant with the LIN specification, but rather to demonstrate how LIN communication can be applied flexibly in closed systems without following the exact LIN specification.  
+This approach offers the advantage of tailoring the communication exactly to the needs of the application — enabling custom message formats, timing, and system behavior — while still benefiting from robust hardware support such as TI’s extended UART features and the TLIN1039 transceiver.
 
-# About this project
-- This project demostrates local interconnect network (LIN) communication
-## About LIN Protocol
-Local interconnect network or (LIN) is a type of asynchronous communication between devices. It is extesively used in automotive industry for communication between non-critical peripherals. It is a low-cost solution for serial communcation in mass production [[1](https://en.wikipedia.org/wiki/Local_Interconnect_Network)].
+---
 
+# About the LIN Protocol
 
-LIN bus is comprised of supply voltage VBAT, ground GND and LIN signal wire.
+LIN (Local Interconnect Network) is an asynchronous, single-wire serial communication bus commonly used in automotive applications for non-safety-critical peripherals. It is a low-cost solution optimized for simple device networks and mass production.
 
-## LIN frame
-![LIN frame](https://ni.scene7.com/is/image/ni/LIN_frame_20090802104146?scl=1)
+A LIN bus consists of:
 
-
-- **Break sequence**: Serves as start notice for all nodes in the bus. When BREAK field begins the LIN line is pulled low for time period of 13 bits from commander's side to give sufficient time for responders to notice.
-- **Sync sequence**: Commander will send character `0x55` into the bus, so that all responders will synchroze and set their baurate according to it
-- **ID sequence**: In this sequence of 8 bits, commander will provide task (recieve or send) and address of responder in a bus. First 6 bits containing responder address is sent, then 2 bits of parity is determines following task to responder: "01"... ignore data that will be sent, "10"... listen for data, "11"... send data.
-- **Data**: 8 bits of data is sent/recieved
-- **Checksum sequence**: It is transmitted as a last field frame to verify that transmission was successful
-
-- In used microcontroller MSPM0C1104 it is featured as an extension for UART module.
-- See [Technical Reference Manual](https://www.ti.com/lit/ug/slau893c/slau893c.pdf?ts=1762344977058&ref_url=https%253A%252F%252Fwww.ti.com%252Fproduct%252FMSPM0C1104) of MSPM0C1104 pages 784 through 806 for UART/LIN extesion module.
-
-# Hardware implementation of LIN protocol
-<img width="592" height="624" alt="image" src="https://github.com/user-attachments/assets/79f02f89-7344-48bb-88e8-a8f357bc6064" />
-
-Differences between commander and responder implementation [[2]](https://www.ti.com/lit/ds/symlink/tlin1039-q1.pdf?ts=1763575962774).
-
-## LIN transmission 
-- @ Page 791
-- LIN counter is clocked by UART clock
-- Can be interrupted upon LINCNT counter overflow and is flagged as CPU_INT.IMASK.LINOVF
-
-### Sending BREAK signal
-- @ Page 791
-- BREAK signal is set by BRK bit in UARTx.LCRH register.
-- It is important to set BREAK signal before data is loaded into TXDATA or FIFO register
-  ```c
-   //Control BREAK 
-   UARTx.LCRH = UARTx.LCRH | (1<<BRK );
-   //Code continues with loading data
-   //...
-   ```
-
-### Generate LIN responder signals
-- @ Page 786
-- To be able to software control generation of LIN responder signals, the TXD_OUT and
-TXD_CTL_EN bit in register UARTx.CTL0 needs to be configured
-- If TXD_CTL_EN = '1' then output pin can be controlled by the TXD_OUT bit if the UART transmit is disabled (CTL0.TXE is cleared).
-
-   ```c
-   //Enable LIN responder signals generation
-   UARTx.CTL0 = UARTx.CTL0 | (1<<TXD_CTL_EN );
-   ```
-## LIN recieve
-- @ Page 792
-- To detect BREAK and SYNC thus enabling reception, these features need to be software configured:
-
-#### A) BREAK Detection
-
-1. Initialize LIN counter to 0 `(UARTx.LINCNT = 0)`
-2. Enable counter compare match mode `(UARTx.LINCTL.LINC0_MATCH = 1)`
-3. Load `UARTx.LINC0` (counter capture 0 register) with counter value corresponding to $9.5 \cdot T_{bit}$
-4. Enable LINC0 match interrupt `(CPU_INT.IMASK.LINC0 = 1)`
-5. Setup LIN count control `(UARTx.LINCTL)`:
-- Enable count while low signal on RXD `(LINCTL.CNTRXLOW = 1)`
-- Enable LIN counter clearing on RXD falling edge `(LINCTL.ZERONE = 1)`
-- Enable LIN counter `(LINCTL.CTRENA = 1)`
-- Optionally a timeout can be added if BREAK field fails to pull itself high withing specific time (see page 792)
-
-#### B) SYNC Detection & edge detection
-
-- The following flow describes a possible LIN sync field validation procedure:
-1. Initialize LIN counter to 0 `(UARTx.LINCNT = 0)` after detecting a valid break field.
-2. Enable interrupt on RX falling edge `(CPU_INT.IMASK.RXNE = 1)`
-3. Setup LIN count control `(LINCTL)`:
-• Enable LIN counter capture on raising RX edge `(LINCTL.LINC1CAP = 1)`
-• Enable LIN counter capture on falling RX edge  `(LINCTL.LINC0CAP = 1)`
-• Enable LIN counter clearing on RX falling edge `(LINCTL.ZERONE = 1)`
-
-#### C) Edge detection during SYNC field
-
-- LIN extension features so called Capture Registers that will detect either rising or falling edge or Rx/Tx
-1. LIN counter is set to 0 and start counting on the falling RX edge. (LINCTL.ZERONE = 1)
-2. RX falling edge interrupt trigger `(RXNE)`:
-- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
-- Verify bit times
-3. RX falling edge interrupt trigger `(RXNE)`:
-- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
-- Verify bit times
-4. RX falling edge interrupt trigger `(RXNE)`:
-- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
-- Verify bit times
-5. RX falling edge interrupt trigger `(RXNE)`:
-- Read capture register `LINC0` (falling edge) and `LINC1` (rising edge) values
-- Verify bit times
-- Calculate the proper baud rate to set. Software must set the baud rate before the start bit of the PID field
-after sync field.
-
-- *TODO: Implement to code*
+* **VBAT** – supply voltage
+* **GND** – ground reference
+* **LIN** – single-wire communication line
 
 ![Schematic](https://github.com/Musislik/lin-ground-temp-sensor/blob/main/LIN_bus.svg)
+
+---
+
+# LIN Frame Structure
+
+![LIN frame](https://ni.scene7.com/is/image/ni/LIN_frame_20090802104146?scl=1)
+
+A LIN frame consists of the following fields:
+
+### **Break**
+
+Marks the beginning of a new LIN frame. The commander drives the line low for **at least 13 bit periods**, ensuring all responders detect the start of communication.
+
+### **Sync (0x55)**
+
+The commander transmits the byte `0x55`. The alternating `01010101` pattern enables responders to measure the duration of high and low intervals, effectively **calibrating their baud-rate measurement** before interpreting the PID field.
+
+### **ID (PID) Field**
+
+The Protected Identifier consists of 8 bits:
+
+* **Bits 0–6**: 7-bit message identifier
+* **Bit 7**: parity bit
+
+The PID defines the response structure and whether a responder should answer.
+
+### **Data Field**
+
+Depending on the PID definition, a LIN message may require:
+* the commander to send up to **8 data bytes** (with no responder reply), or
+* the responder to send up to **8 data bytes**, or
+* no response at all.
+
+
+### **Checksum**
+
+Ensures data integrity.
+
+Two variants exist:
+
+* **Classic checksum**: covers only the data bytes
+* **Enhanced checksum**: covers PID + data bytes (LIN 2.0+)
+
+Example of checksum implementation:
+```
+checksum = 0xFF - ((sum of covered bytes) mod 256)
+```
+
+If the responder responds, it generates the checksum.
+
+---
+
+# Hardware Implementation
+
+<img width="592" height="624" alt="image" src="https://github.com/user-attachments/assets/79f02f89-7344-48bb-88e8-a8f357bc6064" />
+
+### Pull-Up Requirements
+
+* The **commander** implements the dominant pull-up resistor: **1 kΩ** to VBAT through the LIN transceiver.
+* **Responders** only include a weak pull-up of approximately **47 kΩ**, provided internally by TLIN1039.
+
+### Using the TLIN1039 Transceiver
+
+The TLIN1039 provides all necessary physical-layer functionality:
+
+* Merges UART TX/RX onto a single LIN bus pin
+* Translates MCU logic to automotive LIN voltage levels
+* Includes bus-stuck-low protection (prevents a node from holding LIN low)
+* Implements ESD protection and slew-rate control for EMC compliance
+* Provides short-circuit protection on the LIN pin
+* Supports low-power modes and fault detection
+
+---
+
+# LIN Commander Guide
+
+The commander (master) initiates all communication on the bus.
+
+### Sending the BREAK Field
+
+The MSPM0C1104 LIN UART extension allows BREAK generation via `BRK` bit in `UARTx.LCRH`.
+
+```c
+// Generate BREAK condition
+UARTx.LCRH |= (1 << BRK);
+```
+
+### Sending Sync, PID, and Data
+
+After BREAK:
+
+1. Write `0x55` (SYNC) to UART TX FIFO.
+2. Write PID (1 parity bit computed from 7-bit ID).
+3. (Optional) Write 0–8 data bytes.
+4. (Optional) Write the computed checksum.
+
+All these bytes are transmitted using the standard UART framing mechanism, without special handling.
+
+### Checksum
+Could be computed as:
+```
+checksum = 0xFF - ((sum of applicable bytes) mod 256)
+```
+
+---
+
+# LIN Responder Guide
+
+Responders never initiate frames.
+
+### Break Detection
+
+The MSPM0C1104 LIN UART module detects break conditions using hardware logic. When the line is held in the dominant low state beyond the duration of 13 bits, it triggers a break interrupt, signaling frame start. The duration is verified using the timer that measures the dominant state interval.
+
+### Baud-Rate Synchronization Using SYNC
+
+The extended hardware support of the MSPM0C110 includes two measurement timers:
+
+* One measures **dominant** bit durations
+* One measures **recessive** bit durations
+
+During reception of `0x55` (b01010101), software uses these measurements to compute the bit period and update the UART baud rate.
+
+### PID Handling Using a PID Table
+
+Responders typically implement a PID table containing:
+
+* Supported PIDs
+* Expected data lengths
+* A callback function
+
+### Receiving or Transmitting Data
+
+Depending on the PID definition, the responder:
+
+* Processes received data bytes, or
+* Transmits 0–8 data bytes and the checksum
+
+### Checksum Handling
+
+If the responder transmits data, it computes the required checksum.
+
+---
+
+# Demonstration
+As part of demonstration, the LIN bus was selected as the communication protocol for collecting data from ground temperature sensors as part of final thesis "System for temperature control and security surveillance of turtle breeding". The choice was motivated primarily by the bus’s reliable range and simplicity. Since the temperature sensor will be in a small metallic tube, the use of a single data line is advantageous, minimizing wiring complexity and ensuring robust signal transmission.
+
+## Schematic description
+MSPM0C1103 microcontroller was selected for its enhanced UART capabilities, which make LIN implementation easier. An analog temperature sensor was chosen for SW simplicity. For programming and debugging, a Tag‑Connect interface is implemented, providing a compact, solder‑free connection directly to the PCB. A key challenge in the design is that the SWD programming pins are multiplexed with other functional signals, which is an inherent trade‑off of the small package footprint. The hardware reset line is routed together with the SWD interface. For circuit protection, ESD and Schottky diodes were used.
+
+[Tortoises-Temp-Sensor-LIN.pdf](https://github.com/user-attachments/files/23860681/Tortoises-Temp-Sensor-LIN.pdf)
+
+## Software Development
+Due to a delay in the development of the custom board, it was not possible to develop and deploy the software directly on the target hardware within the project timeframe. As a workaround, the required functionality was tested and validated on development boards that had been purchased prior to the start of the project. This approach allowed us to verify data harvesting, ensuring that the software could later be fitted to the final hardware without major modifications.
+
+## Hardware Setup 
+The experimental setup consisted of two LP‑MSPM0C1104 development boards connected via UART. To emulate the behavior of the temperature sensor, a resistive divider was used as a simple analog source. This configuration provided a practical environment for testing the communication protocol before integrating the actual sensor hardware.
+
+## Software project description
+
+---
+
+# References
+
+* MSPM0C1104 Technical Reference Manual (SLAU893C)
+* TLIN1039 LIN Transceiver Datasheet
+* LIN 2.0/2.1/2.2A Protocol Specifications
+
+---
