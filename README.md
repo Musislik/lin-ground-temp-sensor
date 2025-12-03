@@ -189,10 +189,15 @@ Commander then moves to poll another PID until number of needed polls is reached
 
 Obr log data
 
-<img width="592" height="624" alt="image" src="https://github.com/user-attachments/assets/79f02f89-7344-48bb-88e8-a8f357bc6064" />
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-commander_main.drawio.svg" />
+In the picture above you can see main while loop of Commander where polling occurs.
 
-Obr recv
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-incoming_data_interp.drawio.svg" />
+In the picture above you can see how incomming data interrupt is handled.
 
+Commander features simple callback where data received from responder is compared against some arbitrary threshold value.
+
+## LIN responder
 ---
 ## Demonstration Videos
 [Demo 1](https://youtu.be/wHVMJd_wKBM), [Demo 2](https://youtu.be/HMDH7teU0-Q)
