@@ -177,6 +177,8 @@ Due to a delay in the development of the custom board, it was not possible to de
 ## Hardware Setup 
 The experimental setup consisted of two LP‑MSPM0C1104 development boards connected via UART. To emulate the behavior of the temperature sensor, a resistive divider was used as a simple analog source. This configuration provided a practical environment for testing the communication protocol before integrating the actual sensor hardware.
 
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/1764706711210.jpg" />
+
 ## Software project description
 LIN responder mainly polls PIDs within the LIN bus to obtain data from back from them. This conception is closest to final application in semestral thesis where data is polled from temperature sensors. 
 
