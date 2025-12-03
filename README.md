@@ -211,7 +211,7 @@ First break signal is sent by enabling break bit in LCHR register this stays for
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-transm_msg.drawio.svg" />
 
 ## LIN responder
-Reception of LIN protocol to responder also works on basis of state machine. Data reception is handled via UART interrupt. When it gets to PID a function setLINResponderRXMessage() is called where PID is checked for its validity and then from switch for valid PIDs it is decided how to deal with received message. For our case data is sample from AD convrters and sent back.
+Reception of LIN protocol to responder also works on basis of state machine. Data reception is handled via UART interrupt. When it gets to PID a function setLINResponderRXMessage() is called where PID is checked for its validity and then from switch for valid PIDs it is decided how to deal with received message. For our case data is sample from AD converters and sent back.
 
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-fix-Responder.drawio.svg" />
 
