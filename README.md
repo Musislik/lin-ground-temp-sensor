@@ -178,6 +178,20 @@ Due to a delay in the development of the custom board, it was not possible to de
 The experimental setup consisted of two LP‑MSPM0C1104 development boards connected via UART. To emulate the behavior of the temperature sensor, a resistive divider was used as a simple analog source. This configuration provided a practical environment for testing the communication protocol before integrating the actual sensor hardware.
 
 ## Software project description
+LIN responder mainly polls PIDs within the LIN bus to obtain data from back from them. This conception is closest to final application in semestral thesis where data is polled from temperature sensors. 
+
+### LIN commander
+It has by default defined LIN enable signal to high to enable LIN transceiver. LIN communication by itself is triggered by button (GPIO) as interrupt where flag for sending message and receive data are raised.In while loop first PID from message table is sent then receive data flag is raised down, now commander is waiting for data to be received from responder. The reception is hadled as UART interrupt where this interrupt lasts for 1 byte received thus it needs to be counted because number of bytes communication is set 3 bytes (Checksum included). When complete packet is received the receive flag is raised and data is written into Rx buffer.
+
+Obr data at buffer
+
+Commander then moves to poll another PID until number of needed polls is reached. Commander then waits for another communication trigger by button.
+
+Obr log data
+
+Obr poll
+
+Obr recv
 
 ---
 ## Demonstration Videos
