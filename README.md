@@ -189,7 +189,7 @@ Commander then moves to poll another PID until number of needed polls is reached
 
 Obr log data
 
-Obr poll
+<img width="592" height="624" alt="image" src="https://github.com/user-attachments/assets/79f02f89-7344-48bb-88e8-a8f357bc6064" />
 
 Obr recv
 
