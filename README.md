@@ -180,6 +180,10 @@ The experimental setup consisted of two LP‑MSPM0C1104 development boards conne
 ## Software project description
 
 ---
+## Demonstration Videos
+[Demo 1](https://youtu.be/wHVMJd_wKBM), [Demo 2](https://youtu.be/HMDH7teU0-Q)
+
+---
 
 # References
 
