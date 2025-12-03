@@ -219,7 +219,7 @@ Data is either transmitted back or just received as seen on two pictures below
 
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/LIN_mod_program_request_na_8B.png" />
 
-<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/LIN_Texas_example_PID_Send_Get_Response.png" />
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/LIN_Texas_example_PID_Send_No_Response.png" />
 
 ---
 ## Demonstration Videos
