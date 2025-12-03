@@ -183,11 +183,13 @@ LIN responder mainly polls PIDs within the LIN bus to obtain data from back from
 ### LIN commander
 It has by default defined LIN enable signal to high to enable LIN transceiver. LIN communication by itself is triggered by button (GPIO) as interrupt where flag for sending message and receive data are raised.In while loop first PID from message table is sent then receive data flag is raised down, now commander is waiting for data to be received from responder. The reception is hadled as UART interrupt where this interrupt lasts for 1 byte received thus it needs to be counted because number of bytes communication is set 3 bytes (Checksum included). When complete packet is received the receive flag is raised and data is written into Rx buffer.
 
-Obr data at buffer
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/received_data.png" />
+In the picture above you can see received data written to rx buffer (debugger)
 
 Commander then moves to poll another PID until number of needed polls is reached. Commander then waits for another communication trigger by button.
 
-Obr log data
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/polling_multiple_PIDs.png" />
+In the picture above you can see polling PIDs that contain same value that is received.
 
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-commander_main.drawio.svg" />
 In the picture above you can see main while loop of Commander where polling occurs.
@@ -196,6 +198,8 @@ In the picture above you can see main while loop of Commander where polling occu
 In the picture above you can see how incomming data interrupt is handled.
 
 Commander features simple callback where data received from responder is compared against some arbitrary threshold value.
+#### Interpreting received data as LIN
+Receiving data from UART is not enough, checksum at the commander side needs to be computed and compared with received one. The receive message function is modeled as a sort of state machine where first state, data is put to data and checksum buffers respectively. When required data length has been receiver state gets flipped to cheksum, there a proper checksum is calculated and callback is triggered. By default case LIN state stays in LIN_DATA.
 
 ## LIN responder
 ---
