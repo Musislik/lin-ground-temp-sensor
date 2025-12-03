@@ -229,7 +229,7 @@ Data is either transmitted back or just received as seen on two pictures below
 
 * The ground temperature LIN sensor is part of the final thesis: MUSIL, Pavel. *System for temperature control and security surveillance of turtle breeding.* Online, semestral Thesis. Roman ŠOTNER (supervisor). Brno: Brno University of Technology, Faculty of Electrical Engineering and Communication, 2026. Available at: https://www.vut.cz/en/students/final-thesis/detail/170513. [accessed 2025-12-02].
 * The development of the ground temperature LIN sensor was consulted with engineers from egmenergo, in particular with Ing. Ivo Strašil, who is a technical consultant for the thesis.
-* MSPM0C1104 Technical Reference Manual (SLAU893C)
+* [MSPM0C1104 Technical Reference Manual (SLAU893C)](https://www.ti.com/lit/ug/slau893c/slau893c.pdf?ts=1764767323160) (pg785)
 * TLIN1039 LIN Transceiver Datasheet
 * LIN 2.0/2.1/2.2A Protocol Specifications
 
