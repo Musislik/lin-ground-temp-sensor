@@ -234,5 +234,6 @@ Data is either transmitted back or just received as seen on two pictures below
 * [MSPM0C1104 Technical Reference Manual (SLAU893C)](https://www.ti.com/lit/ug/slau893c/slau893c.pdf?ts=1764767323160) (pg785)
 * TLIN1039 LIN Transceiver Datasheet
 * LIN 2.0/2.1/2.2A Protocol Specifications
+* TI Sysconfig
 
 ---
