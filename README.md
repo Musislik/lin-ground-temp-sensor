@@ -213,6 +213,12 @@ Reception of LIN protocol to responder also works on basis of state machine. Dat
 
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-fix-Responder.drawio.svg" />
 
+Data is either transmitted back or just received as seen on two pictures below
+
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/LIN_mod_program_request_na_8B.png" />
+
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/LIN_Texas_example_PID_Send_Get_Response.png" />
+
 ---
 ## Demonstration Videos
 [Demo 1](https://youtu.be/wHVMJd_wKBM), [Demo 2](https://youtu.be/HMDH7teU0-Q)
