@@ -18,7 +18,7 @@ A LIN bus consists of:
 * **GND** – ground reference
 * **LIN** – single-wire communication line
 
-![Schematic](https://github.com/Musislik/lin-ground-temp-sensor/blob/main/LIN_bus.svg)
+![Schematic](https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/LIN_bus.svg)
 
 ---
 
@@ -235,5 +235,6 @@ Data is either transmitted back or just received as seen on two pictures below
 * TLIN1039 LIN Transceiver Datasheet
 * LIN 2.0/2.1/2.2A Protocol Specifications
 * TI Sysconfig
+* OpenAI. ChatGPT (GPT-5) was used for formulating phrases.
 
 ---
