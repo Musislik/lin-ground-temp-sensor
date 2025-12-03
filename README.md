@@ -201,6 +201,13 @@ Commander features simple callback where data received from responder is compare
 #### Interpreting received data as LIN
 Receiving data from UART is not enough, checksum at the commander side needs to be computed and compared with received one. The receive message function is modeled as a sort of state machine where first state, data is put to data and checksum buffers respectively. When required data length has been receiver state gets flipped to cheksum, there a proper checksum is calculated and callback is triggered. By default case LIN state stays in LIN_DATA.
 
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-recv_msg.drawio.svg" />
+
+#### Transmiting data in LIN protocol
+First break signal is sent by enabling break bit in LCHR register this stays for 1 ms then break bit is cleared. Then Sync and PID frame is transmitted directly by UART transmit functions. If there is callback present in message table i.e. commander does not transmit data, then checksum is not calculated. 
+
+<img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-transm_msg.drawio.svg" />
+
 ## LIN responder
 ---
 ## Demonstration Videos
