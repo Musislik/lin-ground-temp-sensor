@@ -183,7 +183,7 @@ The experimental setup consisted of two LP‑MSPM0C1104 development boards conne
 LIN responder mainly polls PIDs within the LIN bus to obtain data from back from them. This conception is closest to final application in semestral thesis where data is polled from temperature sensors. 
 
 ### LIN commander
-It has by default defined LIN enable signal to high to enable LIN transceiver. LIN communication by itself is triggered by button (GPIO) as interrupt where flag for sending message and receive data are raised.In while loop first PID from message table is sent then receive data flag is raised down, now commander is waiting for data to be received from responder. The reception is hadled as UART interrupt where this interrupt lasts for 1 byte received thus it needs to be counted because number of bytes communication is set 3 bytes (Checksum included). When complete packet is received the receive flag is raised and data is written into Rx buffer.
+It has by default defined LIN enable signal to high to enable LIN transceiver. LIN communication by itself is triggered by button (GPIO) as interrupt where flag for sending message and receive data are raised.In while loop first PID from message table is sent then receive data flag is raised down, now commander is waiting for data to be received from responder. The reception is hadled as UART interrupt where this interrupt lasts for 1 byte of received data thus it needs to be counted because number of bytes communication is set 3 bytes (Checksum included). When complete packet is received the receive flag is raised and data is written into Rx buffer.
 
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/imgs/received_data.png" />
 In the picture above you can see received data written to rx buffer (debugger)
@@ -211,7 +211,7 @@ First break signal is sent by enabling break bit in LCHR register this stays for
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-transm_msg.drawio.svg" />
 
 ## LIN responder
-Reception of LIN protocol to responder also works on basis of state machine. Data reception is handled via UART interrupt. When it gets to PID a function setLINResponderRXMessage() is called where PID is checked for its validity and then from switch for valid PIDs it is decided how to deal with received message. For our case data is sample from AD converters and sent back.
+Reception of LIN protocol to responder also works on basis of state machine. Data reception is handled via UART interrupt. When it gets to PID a function setLINResponderRXMessage() is called where PID is checked for its validity and then from switch for valid PIDs it is decided how to deal with received message. For our case data is sampled from AD converters and sent back.
 
 <img width="592" height="624" alt="image" src="https://github.com/Musislik/lin-ground-temp-sensor/blob/main/diagrams/diag_main_loop-fix-Responder.drawio.svg" />
 
