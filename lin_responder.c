@@ -207,7 +207,7 @@ void LIN_0_INST_IRQHandler(void)
             }
             break;
         /* Rising Edge Detection Interrupt on UARTxRXD. */
-        case DL_UART_EXTEND_IIDX_RXD_POS_EDGE:                                  //Positivni hrana -> zacatek break field
+        case DL_UART_EXTEND_IIDX_RXD_POS_EDGE:                                 
             /* Signals the positive edge of a sync field segment. */
             if (gStateMachine == LIN_STATE_SYNC_FIELD_POS_EDGE) {
                 gBitTimes[gNumCycles].posEdge = DL_UART_Extend_getLINRisingEdgeCaptureValue(LIN_0_INST); //Detekce delky log1 za pozitivni hranou
